@@ -37,7 +37,6 @@ def get_child_packages(id):
     try:
         relationships = p.toolkit.get_action('package_relationships_list')(
                 data_dict={'id': id, 'rel': 'parent_of'})
-        print(relationships)
     except Exception as e:
         log.warning(e)
         return {}
