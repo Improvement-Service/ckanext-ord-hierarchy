@@ -6,10 +6,11 @@
 
   {% set parent_packages = h.ord_hierarchy_parent_packages(pkg.id) %}
   {% if parent_packages %}
+    <hr>
     <div class="panel-group" id="accordion-parent">
         <div class="panel-child_datasets">
           <div class="panel-heading">
-            <h4 class="panel-title resource-list-h2">
+            <h4 class="panel-title resource-list-h2 panel-title-hierarchy">
               <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-parent">
                 {{ _('Parent Datasets') }}
               </a>
@@ -42,6 +43,7 @@
 
   {% set child_datasets = h.ord_hierarchy_child_packages(pkg.id) %}
     {% if child_datasets %}
+<hr>
       <div class="panel-group" id="accordion-child">
         <div class="panel-child_datasets">
           <div class="panel-heading">
