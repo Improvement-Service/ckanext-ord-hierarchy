@@ -64,9 +64,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script type="application/javascript">
 $(document).ready(function() {
+    var auto_complete_url = "{{ h.url_for('api.action', ver=3, logic_function='organization_autocomplete', _external=True)}}"
     $('#organisation_name').select2({
         ajax: {
-            url: 'https://test.data.spatialhub.scot/api/3/action/organization_autocomplete?limit=10',
+            url: `${auto_complete_url}?limit=10`,
             dataType: 'json',
             data: function (params) {
                 var query = {
