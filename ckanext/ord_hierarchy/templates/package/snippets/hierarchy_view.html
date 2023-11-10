@@ -7,22 +7,21 @@
   {% set parent_packages = h.ord_hierarchy_parent_packages(pkg.id) %}
   {% if parent_packages %}
     <hr>
-    <div class="panel-group" id="accordion-parent">
+    <div class="panel-group" id="hierarchy-accordion-parent">
         <div class="panel-child_datasets">
           <div class="panel-heading">
-            <h4 class="panel-title resource-list-h2 panel-title-hierarchy">
-              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-parent">
+            <h2 class="panel-title panel-title-hierarchy">
+              <a class="hierarchy-accordion-button accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parent" aria-expanded="true" aria-controls="#collapse-parent">
                 {{ _('Parent Datasets') }}
               </a>
-            </h4>
+            </h2>
           </div>
-         <div id="collapse-parent" aria-expanded="false" class="panel-collapse collapse">
-                <div class="panel-body">
+         <div id="collapse-parent" aria-expanded="true" class="panel-collapse accordion-collapse collapse show" data-bs-parent="#collapse-parent">
+                <div class="panel-body hierarchy-panel-body" bis_skin_checked="1">
                   {% for package in parent_packages %}
-                    {% set truncate = truncate or 130 %}
-                    {% set truncate_title = truncate_title or 60 %}
-                    {% set title = package.title or package.name %}
-                    {% set display_title = h.truncate(title, truncate_title) %}
+                  
+                  {% set title = package.title or package.name %}
+                  {% set display_title = title | truncate(50) %}
 
                    <div class="hierarchy_dataset_item_container">
                       {#<h4><a href="/dataset/{{ package.id }}">- &nbsp;&nbsp; {{package.title}}</a></h4>#}
@@ -30,7 +29,7 @@
                         <div class="hierarchy_list_item-grid-container">
                           <div class="hierarchy_list_item_title"><h4><a href="{{h.url_for('%s.read' % package.type, id=package.name)}}" title="{{display_title}}">{{ display_title }}</a></h4></div>
                           <div class="hierarchy_list_item_resources"><p>Resources: {{ package.resources|length }}</p></div>
-                          <div class="hierarchy_list_item_date"><p>Last Updated: {{ h.get_dataset_date_package_list_view(package) }}</p></div>
+                          <div class="hierarchy_list_item_date"><p>Last Updated: {{ h.ord_hierarchy_get_dataset_last_updated_date(package) }}</p></div>
                         </div>
                      </div>
                     </div>
@@ -44,22 +43,20 @@
   {% set child_datasets = h.ord_hierarchy_child_packages(pkg.id) %}
     {% if child_datasets %}
 <hr>
-      <div class="panel-group" id="accordion-child">
+      <div class="panel-group" id="hierarchy-accordion-child">
         <div class="panel-child_datasets">
           <div class="panel-heading">
             <h4 class="panel-title hierarchy_accordion_title">
-              <a class="accordion-toggle hierarchy_accordion_toggle" style="text-decoration:none; " data-toggle="collapse" data-parent="#accordion" href="#collapse-child">
+              <a class="hierarchy-accordion-button accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-child" aria-expanded="true" aria-controls="#collapse-child"></a>
                 {{ child_datasets|length}} {{ _(' Child Datasets') }}
               </a>
             </h4>
           </div>
-          <div id="collapse-child" aria-expanded="false" class="panel-collapse collapse">
+          <div id="collapse-child" aria-expanded="true" class="panel-collapse accordion-collapse collapse show" data-bs-parent="#collapse-child">
                 <div class="panel-body">
                   {% for package in child_datasets %}
-                    {% set truncate = truncate or 130 %}
-                    {% set truncate_title = truncate_title or 60 %}
                     {% set title = package.title or package.name %}
-                    {% set display_title = h.truncate(title, truncate_title) %}
+                    {% set display_title = title | truncate(50) %}
 
                    <div class="hierarchy_dataset_item_container">
                       {#<h4><a href="/dataset/{{ package.id }}">- &nbsp;&nbsp; {{package.title}}</a></h4>#}

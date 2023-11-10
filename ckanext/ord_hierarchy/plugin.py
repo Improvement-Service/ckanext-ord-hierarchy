@@ -4,6 +4,7 @@ import ckan.logic as logic
 from flask import Blueprint
 from flask import render_template, render_template_string, redirect
 from .dbutil import *
+from datetime import datetime
 import ckan.model as model
 
 import re
@@ -159,6 +160,33 @@ def get_package_tree(pkg):
     finally:       
         model.Session.commit()
 
+def convert_to_dt(dt: str):
+    if dt is not None:
+        return datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S.%f")
+    return None
+
+def get_dataset_last_updated_date(pkg):
+    def get_resource_dts(resources):
+        result = []
+        for resource in resources:
+            last_modified = resource.get("last_modified")
+            created = resource.get("created")
+            if last_modified is None:
+                result.append(convert_to_dt(created))
+            else:
+                result.append(convert_to_dt(last_modified))
+        result = list(filter(None, result))
+        result.sort()
+        return result
+
+    if pkg.get("num_resources", 0) > 0:
+        resources = pkg.get("resources")
+        dt_list = get_resource_dts(resources)
+        newest_dt = dt_list[-1]
+        formatted_dt = newest_dt.strftime("%Y-%m-%d")
+        return formatted_dt
+    else:
+        return "n/a"
 
 def _add_child_packages(pkg):
 
@@ -189,7 +217,6 @@ class OrdHierarchyPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(p.IConfigurable)
     p.implements(p.ITemplateHelpers)
-    p.implements(p.IRoutes)
     p.implements(p.IBlueprint)
 
     package_link = '/dataset/'
@@ -218,7 +245,8 @@ class OrdHierarchyPlugin(p.SingletonPlugin):
             'ord_hierarchy_child_packages': get_child_packages,
             'ord_hierarchy_parent_packages': get_parent_packages,
             'ord_hierarchy_top_package': get_top_level_package,
-            'ord_hierarchy_get_datatree': get_package_tree
+            'ord_hierarchy_get_datatree': get_package_tree,
+            'ord_hierarchy_get_dataset_last_updated_date': get_dataset_last_updated_date
             }
 
     def get_blueprint(self):
@@ -232,13 +260,12 @@ class OrdHierarchyPlugin(p.SingletonPlugin):
 
         blueprint.template_folder = 'templates'
 
-        # Add plugin url rules to Blueprint object
-        rules = [
-            ('/dataset/relationships/<id>', 'relationships_read}', controller.relationship_view),
-        ]
-
-        for rule in rules:
-            blueprint.add_url_rule(*rule)
+        blueprint.add_url_rule(
+            '/dataset/relationships/<id>',
+            'relationships_read', 
+            methods=['GET'],
+            view_func=controller.relationship_view
+        )
 
         blueprint.add_url_rule(
             '/dataset/relationships/<object_dataset_id>/delete/<subject_dataset_id>',
@@ -266,7 +293,7 @@ class OrdHierarchyPlugin(p.SingletonPlugin):
 class OrdHierarchyController:
 
     def relationship_view(self, id):
-        if logic.check_access('package_show', {}, data_dict={'id': id}):
+        if logic.check_access('package_update', {}, data_dict={'id': id}):
             pkg = p.toolkit.get_action('package_show')(
                 data_dict={'id': id})
 
@@ -276,13 +303,19 @@ class OrdHierarchyController:
         if request.environ['REQUEST_METHOD'] == 'POST':
             referer = request.environ['HTTP_REFERER']
             try:
-                delete_relationship(subject_dataset_id, object_dataset_id)
+                if logic.check_access('package_update', {}, data_dict={'id': id}):
+                    delete_relationship(subject_dataset_id, object_dataset_id)
+                else:
+                    render_template('error_document_template',
+                            code='401',
+                            name='Unauthorized',
+                            content='Not Unauthorized for this action.')
             except Exception as e:
                 log.warning(e)
             return redirect(referer, code=302)
 
     def add_package_relationship(self, id):
-        if logic.check_access('package_show', {}, data_dict={'id': id}):
+        if logic.check_access('package_update', {}, data_dict={'id': id}):
             pkg = p.toolkit.get_action('package_show')(
                 data_dict={'id': id})
         else:
