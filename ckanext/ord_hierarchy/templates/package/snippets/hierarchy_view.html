@@ -12,7 +12,7 @@
           <div class="panel-heading">
             <h2 class="panel-title panel-title-hierarchy">
               <a class="hierarchy-accordion-button accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-parent" aria-expanded="true" aria-controls="#collapse-parent">
-                {{ _('Parent Datasets') }}
+                {{ parent_packages|length}} {{_('Parent Datasets') }}
               </a>
             </h2>
           </div>
@@ -42,18 +42,18 @@
 
   {% set child_datasets = h.ord_hierarchy_child_packages(pkg.id) %}
     {% if child_datasets %}
-<hr>
+      <hr>
       <div class="panel-group" id="hierarchy-accordion-child">
         <div class="panel-child_datasets">
           <div class="panel-heading">
-            <h4 class="panel-title hierarchy_accordion_title">
-              <a class="hierarchy-accordion-button accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-child" aria-expanded="true" aria-controls="#collapse-child"></a>
+            <h2 class="panel-title panel-title-hierarchy">
+              <a class="hierarchy-accordion-button accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-child" aria-expanded="true" aria-controls="#collapse-child">
                 {{ child_datasets|length}} {{ _(' Child Datasets') }}
               </a>
-            </h4>
+            </h2>
           </div>
           <div id="collapse-child" aria-expanded="true" class="panel-collapse accordion-collapse collapse show" data-bs-parent="#collapse-child">
-                <div class="panel-body">
+                <div class="panel-body hierarchy-panel-body"bis_skin_checked="1">
                   {% for package in child_datasets %}
                     {% set title = package.title or package.name %}
                     {% set display_title = title | truncate(50) %}
