@@ -48,11 +48,8 @@
     </thead>
     <tbody>
       {% for package in parent_packages %}
-
-        {% set truncate = truncate or 130 %}
-        {% set truncate_title = truncate_title or 60 %}
         {% set title = package.title or package.name %}
-        {% set display_title = h.truncate(title, truncate_title) %}
+        {% set display_title = title | truncate(50) %}
 
         <tr>
           <td class="media">
@@ -68,10 +65,8 @@
       {% endfor %}
       {% for package in child_packages %}
 
-        {% set truncate = truncate or 130 %}
-        {% set truncate_title = truncate_title or 60 %}
         {% set title = package.title or package.name %}
-        {% set display_title = h.truncate(title, truncate_title) %}
+        {% set  display_title = title | truncate(50)  %}
 
         <tr>
           <td class="media">

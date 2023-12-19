@@ -15,19 +15,10 @@
 .panel-heading {
     border-left: 0;
     padding-left: 0px !important;
+    border-bottom: 0px !important;
 }
 
-.panel-heading .accordion-toggle:after {
-    /* symbol for "opening" panels */
-    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
-    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
-    float: right;        /* adjust as needed */
-    color: grey;         /* adjust as needed */
-}
 
-.panel-heading .accordion-toggle[aria-expanded="true"]:after {
-    content: "\e114";
-}
 
 .hierarchy_accordion_title {
     color: black;
@@ -42,11 +33,15 @@
 .hierarchy_dataset_item_container {
     /*border: 1px solid rgb(191, 191, 191);*/
     padding-bottom: 10px;
+    padding-left: 10px;
+}
 
+.hierarchy_dataset_item {
+    padding-top: 10px;
 }
 
 .hierarchy_dataset_item:hover {
-    background-color: gray;
+ background-color: #eee;
 }
 
 .hierarchy_list_item_title {
@@ -88,14 +83,17 @@
   grid-template-areas:
     'title title title title title resources'
     'date date date date date date';
-  border: 1px solid rgb(191, 191, 191);
+  /* border: 1px solid rgb(191, 191, 191); */
 }
 
-.hierarchy_list_item-grid-container > div {
-  background-color: rgba(255, 255, 255, 0.8);
-  /*padding: 20px 0;*/
+.hierarchy-accordion-button {
+    background-color: white;
+    font-size: inherit;
+    padding-left: 0px;
 }
 
-.panel-title-hierarchy:hover {
-    background-color: lightgray;
+.hierarchy-accordion-button:not(.collapsed) {
+    color: #333333;
+    background-color: white;
+    box-shadow: none;
 }
